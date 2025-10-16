@@ -1,0 +1,33 @@
+<div class="container">  
+
+  <div class="main-content">
+    <!-- Left column -->
+    <div class="left-column">
+      <h1>CL-Chat</h1>
+      <div class="connection">
+        <span [class.ok]="connected" [class.bad]="!connected">
+          ● {{ connected ? 'connected' : 'disconnected' }}
+        </span>
+      </div>
+
+      <deep-chat
+        id="deepchat"
+        style="border-radius: 8px;font-size: 12px;height: 60vh;width: 30vw;"
+        [demo]="false"
+        [introMessage]="introMessage"
+        [connect]="connect"
+        [responseInterceptor]="responseInterceptor"
+        [displayLoadingBubble]="true"
+      ></deep-chat>
+    </div>
+
+    <!-- Right column -->
+    <div class="right-column">
+      <div class="user-info">
+        <b>Session Info:</b>
+        <p><strong>User:</strong> {{ userId }}</p>
+        <p><strong>Tenant:</strong> {{ tenant }}</p>
+      </div>
+    </div>
+  </div>
+</div>

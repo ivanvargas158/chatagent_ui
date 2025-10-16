@@ -1,0 +1,68 @@
+<div class="container">
+  <h1>Chat Orchestrator</h1>
+  <div class="chat-wrapper">
+    <!-- LEFT: CURRENT CHAT -->
+    <div class="chat-section">
+      <div class="connection" *ngIf="(chat.isConnected() | async) as connected">
+        <span [class.ok]="connected" [class.bad]="!connected">
+          ● {{ connected ? 'connected' : 'disconnected' }}
+        </span>
+      </div>
+
+      <div class="messages" *ngIf="(chat.messages() | async) as msgs">
+        <div
+          *ngFor="let m of msgs; trackBy: trackByIdx"
+          class="msg"
+          [class.assistant]="m.role==='assistant'"
+          [class.user]="m.role==='user'"
+          [class.system]="m.role==='system'"
+        >
+          <div class="role">{{ m.role }}</div>
+          <div class="text">{{ m.text }}</div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <input [(ngModel)]="input" (keyup.enter)="send()" placeholder="Type a message to start the workflow..." />
+        <input type="file" multiple (change)="onFileSelected($event)" />
+        <button (click)="send()" [disabled]="!canSend()">Send</button>
+      </div>
+
+      <div class="attachments" *ngIf="selectedFiles.length">
+        <strong>Files ready to send:</strong>
+        <ul>
+          <li *ngFor="let f of selectedFiles">{{ f.name }} ({{ f.type || 'application/octet-stream' }})</li>
+        </ul>
+      </div>
+
+      <div class="progress">
+        <h3>Node progress</h3>
+        <div class="bar" *ngFor="let n of nodes()">
+          <div class="bar-title">{{ n }}</div>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="pct(n)"></div>
+          </div>
+        </div>
+      </div>
+
+      <details>
+        <summary>Raw events log</summary>
+        <pre>{{ logs | json }}</pre>
+      </details>
+    </div>
+
+    <!-- RIGHT: DEEP CHAT -->
+    <div class="deep-chat-section">
+      <h1>Deep Chat</h1>
+      <deep-chat
+        demo="true"
+        connect='{
+          "url": "ws://127.0.0.1:8000/api/v1/chat-agent/ws",
+          "websocket": true,
+        }'
+        style="border-radius: 8px"
+        introMessage='{"text": "Chat will attempt to establish a websocket connection as soon as the component loads up."}'
+      ></deep-chat>
+    </div>
+  </div>
+</div>
